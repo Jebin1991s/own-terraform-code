@@ -1,5 +1,5 @@
 resource "aws_instance" "web-server" {
-  ami           = "ami-026b57f3c383c2eec"
+  ami           = "ami-051a31ab2f4d498f5"
   instance_type = "m7i-flex.large"
   key_name      = "Devops-Test"
   tags = {
