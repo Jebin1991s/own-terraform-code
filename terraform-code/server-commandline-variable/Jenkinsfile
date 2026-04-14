@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'myownami', defaultValue: 'ami-051a31ab2f4d498f5', description: 'AMI ID')
+        string(name: 'ownhardware', defaultValue: 'm7i-flex.large', description: 'Instance Type')
+        string(name: 'mykeyname', defaultValue: 'Devops-Test', description: 'Key Pair Name')
+        string(name: 'myregion', defaultValue: 'ap-south-1', description: 'AWS Region')
+    }
+
+    stages {
+
+        stage('Clone Repository') {
+            steps {
+                deleteDir()
+                git branch: 'main',
+                    url: 'https://github.com/Jebin1991s/own-terraform-code.git'
+            }
+        }
+
+        stage('Terraform Init & Apply') {
+            steps {
+                sh """
+                cd terraform-code/server-commandline-variable
+
+                cat <<EOF > terraform.tfvars
+ami = "${params.myownami}"
+hardware = "${params.ownhardware}"
+keyname = "${params.mykeyname}"
+region = "${params.myregion}"
+EOF
+
+                terraform init
+                terraform plan
+                terraform apply -auto-approve
+                """
+            }
+        }
+    }
+}
